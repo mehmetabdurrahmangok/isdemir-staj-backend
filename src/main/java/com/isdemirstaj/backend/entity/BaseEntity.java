@@ -27,7 +27,7 @@ public abstract class BaseEntity {
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
+    @Column(name = "UPDATE_AT")
     private LocalDateTime updatedAt;
 
 }
