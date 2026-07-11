@@ -2,7 +2,10 @@ package com.isdemirstaj.backend.controller;
 
 import com.isdemirstaj.backend.dto.MalzemeResponseDto;
 import com.isdemirstaj.backend.service.MalzemeService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
