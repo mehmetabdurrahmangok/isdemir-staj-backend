@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MalzemeService {
+public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantığını içerir ve MalzemeRepository'yi kullanır.
     
-    private final MalzemeRepository malzemeRepository;
+    private final MalzemeRepository malzemeRepository; // MalzemeRepository'yi kullanmak için bir alan tanımlanır.
 
-    public MalzemeService(MalzemeRepository malzemeRepository) {
+    public MalzemeService(MalzemeRepository malzemeRepository) { // MalzemeService sınıfının yapıcı metodu, MalzemeRepository'yi alır ve alanı başlatır.
         this.malzemeRepository = malzemeRepository;
     }
 

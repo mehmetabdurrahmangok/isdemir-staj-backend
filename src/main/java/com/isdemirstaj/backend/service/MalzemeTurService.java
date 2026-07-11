@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MalzemeTurService {
+public class MalzemeTurService { // Malzeme türleri ile ilgili işlemleri gerçekleştiren servis sınıfı
     private final MalzemeTurRepository malzemeTurRepository;
 
     public MalzemeTurService(MalzemeTurRepository malzemeTurRepository) {

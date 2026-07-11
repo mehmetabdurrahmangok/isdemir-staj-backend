@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MalzemeTurResponseDto {
+public class MalzemeTurResponseDto { // MalzemeTur entity'sinin DTO sınıfı
     private String malzemeTurAdi;
 }

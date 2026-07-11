@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/malzemeTurleri") // bu controllerin hangi endpoint ile ilişkilendirileceğini belirtir
 public class MalzemeTurController {
 
-    private final MalzemeTurService malzemeTurService;
+    private final MalzemeTurService malzemeTurService; // MalzemeTurService sınıfının bir örneğini tutar
+    // service fonksiyonları controller üzerinden çağırılır
 
     public MalzemeTurController(MalzemeTurService malzemeTurService) {
         this.malzemeTurService = malzemeTurService;
-    }
+    } // constructor injection yöntemi ile MalzemeTurService sınıfının bir örneğini alır
 
     // Bütün malzeme türlerini listeleyen endpoint
     @GetMapping

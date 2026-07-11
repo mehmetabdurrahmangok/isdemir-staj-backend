@@ -8,7 +8,7 @@ import lombok.Setter;
 @Table(name = "MALZEME_TURU_TANIM_TBL")
 @Getter
 @Setter
-public class MalzemeTurEntity extends BaseEntity {
+public class MalzemeTurEntity extends BaseEntity { // MalzemeTur tablosunu temsil eden entity sınıfı
     
     @Column(name = "MALZEME_TURU", nullable = false, unique = true)
     private String malzemeTurAdi;

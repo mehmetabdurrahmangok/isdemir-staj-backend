@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @CrossOrigin // bir porttan diğerine istek atabilmek için
-@RestController
-@RequestMapping("/api/malzemeler")
+@RestController // bu sınıfın controller olduğunu belirtir
+@RequestMapping("/api/malzemeler") // bu controllerin hangi endpoint ile ilişkilendirileceğini belirtir
 public class MalzemeController {
-    
+
     private final MalzemeService malzemeService;
 
     public MalzemeController(MalzemeService malzemeService) {

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "MALZEME_TANIM_TBL")
-public class MalzemeEntity extends BaseEntity {
+public class MalzemeEntity extends BaseEntity { // Malzeme tablosunu temsil eden entity sınıfı
     
     @ManyToOne
     @JoinColumn(name = "MALZEME_TUR_ID", referencedColumnName = "ID")

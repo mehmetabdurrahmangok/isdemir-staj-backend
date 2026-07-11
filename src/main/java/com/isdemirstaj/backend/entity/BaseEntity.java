@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity { // BaseEntity adında bir abstract sınıf tanımlar ve diğer entity sınıflarının temelini oluşturur
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
