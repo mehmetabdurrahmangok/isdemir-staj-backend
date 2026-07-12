@@ -3,15 +3,23 @@ package com.isdemirstaj.backend.entity;
 import com.isdemirstaj.backend.entity.enums.MenseiEnum;
 
 import jakarta.persistence.*;
-
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
 @Table(name = "MALZEME_TANIM_TBL")
 public class MalzemeEntity extends BaseEntity { // Malzeme tablosunu temsil eden entity sınıfı
+
+    public MalzemeEntity(String malzemeKodu, String malzemeAdi, MalzemeTurEntity malzemeTur, MenseiEnum mensei) {
+        this.malzemeKodu = malzemeKodu;
+        this. malzemeAdi = malzemeAdi;
+        this.mensei = mensei;
+        this.malzemeTur = malzemeTur;
+    }
     
     @ManyToOne
     @JoinColumn(name = "MALZEME_TUR_ID", referencedColumnName = "ID")

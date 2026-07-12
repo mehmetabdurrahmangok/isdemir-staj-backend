@@ -2,10 +2,12 @@ package com.isdemirstaj.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "MALZEME_TURU_TANIM_TBL")
+@NoArgsConstructor
 @Getter
 @Setter
 public class MalzemeTurEntity extends BaseEntity { // MalzemeTur tablosunu temsil eden entity sınıfı

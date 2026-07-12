@@ -1,12 +1,20 @@
 package com.isdemirstaj.backend.controller;
 
-import com.isdemirstaj.backend.dto.MalzemeTurResponseDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurCreateDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurResponseDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurUpdateDto;
 import com.isdemirstaj.backend.service.MalzemeTurService;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +35,23 @@ public class MalzemeTurController {
     @GetMapping
     public List<MalzemeTurResponseDto> getMalzemeTurleri() {
         return malzemeTurService.getAllMalzemeTurleri();
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<MalzemeTurResponseDto> createMalzemeTur(@RequestBody MalzemeTurCreateDto createDto) {
+        MalzemeTurResponseDto yeniTur = malzemeTurService.createMalzemeTur(createDto);
+        return ResponseEntity.ok(yeniTur);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<MalzemeTurResponseDto> updateMalzemeTur(@PathVariable Long id, @RequestBody MalzemeTurUpdateDto updateDto) {
+        return ResponseEntity.ok(malzemeTurService.updateMalzemeTur(id, updateDto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMalzemeTur(@PathVariable Long id) {
+        malzemeTurService.deleteMalzemeTur(id);
+        return ResponseEntity.noContent().build();
     }
     
 }

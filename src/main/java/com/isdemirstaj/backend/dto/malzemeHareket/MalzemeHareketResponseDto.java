@@ -1,6 +1,8 @@
-package com.isdemirstaj.backend.dto;
+package com.isdemirstaj.backend.dto.malzemeHareket;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MalzemeHareketResponseDto {
-    private Long MalzemeId;
+    private Long id;
+    private MalzemeResponseDto malzeme;
     private LocalDateTime hareketTarihi;
-    private double miktar;
+    private BigDecimal miktar;
     private String hareketTuru;
 }

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 import com.isdemirstaj.backend.entity.enums.HareketTuruEnum;
 
@@ -32,5 +33,5 @@ public class MalzemeHareketEntity extends BaseEntity {
     private HareketTuruEnum hareketTuru;
 
     @Column(name = "MIKTAR")
-    private double miktar;
+    private BigDecimal miktar;
 }
