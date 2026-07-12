@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MalzemeTurEntity extends BaseEntity { // MalzemeTur tablosunu temsil eden entity sınıfı
-    
+
     @Column(name = "MALZEME_TURU", nullable = false, unique = true)
     private String malzemeTurAdi;
 }

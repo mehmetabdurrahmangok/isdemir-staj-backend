@@ -1,6 +1,7 @@
 package com.isdemirstaj.backend.controller;
 
 import com.isdemirstaj.backend.dto.malzeme.MalzemeCreateDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeDetayResponseDto;
 import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
 import com.isdemirstaj.backend.dto.malzeme.MalzemeUpdateDto;
 import com.isdemirstaj.backend.service.MalzemeService;
@@ -56,5 +57,12 @@ public class MalzemeController {
     public ResponseEntity<Void> deleteMalzeme(@PathVariable Long id) {
         malzemeService.deleteMalzeme(id);
         return ResponseEntity.noContent().build(); // 204 No Content döner (Başarılı ama içerik yok)
+    }
+
+    // koda göre malzeme çekmek için endpoint
+    @GetMapping("/detay/{malzemeKodu}")
+    public ResponseEntity<MalzemeDetayResponseDto> getMalzemeDetayByKodu(@PathVariable String malzemeKodu) {
+        MalzemeDetayResponseDto detay = malzemeService.getMalzemeDetayByKodu(malzemeKodu);
+        return ResponseEntity.ok(detay);
     }
 }

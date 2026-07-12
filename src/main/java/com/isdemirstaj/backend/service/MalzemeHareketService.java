@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 @Service
 public class MalzemeHareketService {
@@ -30,20 +31,26 @@ public class MalzemeHareketService {
         List<MalzemeHareketEntity> malzemeHareketleri = malzemeHareketRepository.findAll();
 
         return malzemeHareketleri.stream()
-                .map(malzemeHareket -> new MalzemeHareketResponseDto(
-                    malzemeHareket.getId(),
-                    new MalzemeResponseDto(
-                        malzemeHareket.getMalzeme().getId(),
-                        malzemeHareket.getMalzeme().getMalzemeKodu(),
-                        malzemeHareket.getMalzeme().getMalzemeAdi(),
-                        malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getId() : null,
-                        malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
-                        malzemeHareket.getMalzeme().getMensei() != null ? malzemeHareket.getMalzeme().getMensei().name() : "-"
-                    ),
-                    malzemeHareket.getHareketTarihi(),
-                    malzemeHareket.getMiktar(),
-                    malzemeHareket.getHareketTuru().toString()
-                ))
+                .map(malzemeHareket -> {
+                    // Malzemenin güncel stok durumunu anlık olarak çekiyoruz
+                    BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzemeHareket.getMalzeme().getId());
+                    
+                    return new MalzemeHareketResponseDto(
+                        malzemeHareket.getId(),
+                        new MalzemeResponseDto(
+                            malzemeHareket.getMalzeme().getId(),
+                            malzemeHareket.getMalzeme().getMalzemeKodu(),
+                            malzemeHareket.getMalzeme().getMalzemeAdi(),
+                            malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getId() : null,
+                            malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
+                            malzemeHareket.getMalzeme().getMensei() != null ? malzemeHareket.getMalzeme().getMensei().name() : "-",
+                            anlikStok // 7. Parametre eklendi
+                        ),
+                        malzemeHareket.getHareketTarihi(),
+                        malzemeHareket.getMiktar(),
+                        malzemeHareket.getHareketTuru().toString()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -61,6 +68,7 @@ public class MalzemeHareketService {
         yeniHareket.setOper(createDto.getOper());
 
         malzemeHareketRepository.save(yeniHareket);
+        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
 
         // İç içe geçmiş (nested) DTO yapımızla yanıtı dönüyoruz
         return new MalzemeHareketResponseDto(
@@ -71,7 +79,8 @@ public class MalzemeHareketService {
                 malzeme.getMalzemeAdi(),
                 malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
                 malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
-                malzeme.getMensei() != null ? malzeme.getMensei().name() : "-"
+                malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
+                anlikStok
             ),
             yeniHareket.getHareketTarihi(),
             yeniHareket.getMiktar(),
@@ -109,6 +118,8 @@ public class MalzemeHareketService {
 
         malzemeHareketRepository.save(mevcutHareket);
 
+        BigDecimal anlikHareket = malzemeHareketRepository.hesaplaMevcutStok(mevcutHareket.getMalzeme().getId());
+
         // Güncel veriyi Response DTO'ya dönüştürüp geri yolluyoruz
         return new MalzemeHareketResponseDto(
             mevcutHareket.getId(),
@@ -118,7 +129,8 @@ public class MalzemeHareketService {
                 mevcutHareket.getMalzeme().getMalzemeAdi(),
                 mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getId() : null,
                 mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
-                mevcutHareket.getMalzeme().getMensei() != null ? mevcutHareket.getMalzeme().getMensei().name() : "-"
+                mevcutHareket.getMalzeme().getMensei() != null ? mevcutHareket.getMalzeme().getMensei().name() : "-",
+                anlikHareket
             ),
             mevcutHareket.getHareketTarihi(),
             mevcutHareket.getMiktar(),

@@ -23,7 +23,7 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity { // BaseEntity adında bir abstract sınıf tanımlar ve diğer entity sınıflarının temelini oluşturur
 
-@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_sequence")
     @SequenceGenerator(name = "base_sequence", sequenceName = "HIBERNATE_SEQUENCE", allocationSize = 1)
     private Long id;
