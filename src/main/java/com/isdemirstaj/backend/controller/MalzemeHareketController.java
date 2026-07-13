@@ -18,6 +18,8 @@ import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketResponseDto;
 import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketUpdateDto;
 import com.isdemirstaj.backend.service.MalzemeHareketService;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/malzemeHareketleri")
@@ -35,13 +37,13 @@ public class MalzemeHareketController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<MalzemeHareketResponseDto> createMalzemeHareket(@RequestBody MalzemeHareketCreateDto createDto) {
+    public ResponseEntity<MalzemeHareketResponseDto> createMalzemeHareket(@Valid @RequestBody MalzemeHareketCreateDto createDto) {
         MalzemeHareketResponseDto yeniHareket = malzemeHareketService.createMalzemeHareket(createDto);
         return ResponseEntity.ok(yeniHareket);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<MalzemeHareketResponseDto> updateMalzemeHareket(@PathVariable Long id, @RequestBody MalzemeHareketUpdateDto updateDto) {
+    public ResponseEntity<MalzemeHareketResponseDto> updateMalzemeHareket(@PathVariable Long id, @Valid @RequestBody MalzemeHareketUpdateDto updateDto) {
         return ResponseEntity.ok(malzemeHareketService.updateMalzemeHareket(id, updateDto));
     }
 

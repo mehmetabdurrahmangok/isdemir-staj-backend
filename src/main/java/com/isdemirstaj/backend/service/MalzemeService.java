@@ -7,6 +7,7 @@ import com.isdemirstaj.backend.dto.malzeme.MalzemeUpdateDto;
 import com.isdemirstaj.backend.entity.MalzemeEntity;
 import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
 import com.isdemirstaj.backend.entity.MalzemeTurEntity;
+import com.isdemirstaj.backend.exception.ResourceNotFoundException;
 import com.isdemirstaj.backend.repository.MalzemeHareketRepository;
 import com.isdemirstaj.backend.repository.MalzemeRepository;
 import com.isdemirstaj.backend.repository.MalzemeTurRepository;
@@ -58,7 +59,7 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     public MalzemeResponseDto createMalzeme(MalzemeCreateDto malzemeCreateDto) {
 
         MalzemeTurEntity malzemeTur = malzemeTurRepository.findById(malzemeCreateDto.getMalzemeTurId())
-            .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme türü bulunamadı"));
+            .orElseThrow(() -> new ResourceNotFoundException("Belirtilen id'ye uygun malzeme türü bulunamadı"));
 
         MalzemeEntity malzemeEntity = new MalzemeEntity(
             malzemeCreateDto.getMalzemeKodu(),
@@ -84,7 +85,7 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     // Malzeme silen metod
     public void deleteMalzeme(Long id) {
         if (!malzemeRepository.existsById(id)) {
-            throw new RuntimeException("Silinmek istenen malzeme bulunamadı. ID: " + id);
+            throw new ResourceNotFoundException("Silinmek istenen malzeme bulunamadı. ID: " + id);
         }
         malzemeRepository.deleteById(id);
     }
@@ -93,11 +94,11 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     public MalzemeResponseDto updateMalzeme(Long id, MalzemeUpdateDto updateDto) {
         // 1. Güncellenecek malzemeyi veritabanından bul
         MalzemeEntity mevcutMalzeme = malzemeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Güncellenecek malzeme bulunamadı. ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Güncellenecek malzeme bulunamadı. ID: " + id));
 
         // 2. Yeni atanan malzeme türünü doğrula
         MalzemeTurEntity malzemeTur = malzemeTurRepository.findById(updateDto.getMalzemeTurId())
-            .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme türü bulunamadı"));
+            .orElseThrow(() -> new ResourceNotFoundException("Belirtilen id'ye uygun malzeme türü bulunamadı"));
 
         // 3. Mevcut malzemenin verilerini yeni gelen verilerle değiştir
         mevcutMalzeme.setMalzemeKodu(updateDto.getMalzemeKodu());
@@ -128,7 +129,7 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     public MalzemeDetayResponseDto getMalzemeDetayByKodu(String malzemeKodu) {
         // malzemeyi koduna göre veri tabanından getir
         MalzemeEntity malzeme = malzemeRepository.findByMalzemeKodu(malzemeKodu)
-            .orElseThrow(() -> new RuntimeException("bu koda sahip bir malzeme bulunamadı"));
+            .orElseThrow(() -> new ResourceNotFoundException("bu koda sahip bir malzeme bulunamadı"));
 
         // Anlık stok hesaplama
         BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());

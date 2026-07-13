@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid; // Validasyon hataları için
+
 import java.util.List;
 
 @CrossOrigin // bir porttan diğerine istek atabilmek için
@@ -41,13 +43,13 @@ public class MalzemeController {
     // buraya silme ekleme ve güncelleme endpointleri eklenecek
     // yeni malzeme eklemek için olan endpoint
     @PostMapping("/create")
-    public MalzemeResponseDto createMalzeme(@RequestBody MalzemeCreateDto malzemeCreateDto) {
+    public MalzemeResponseDto createMalzeme(@Valid @RequestBody MalzemeCreateDto malzemeCreateDto) {
         return malzemeService.createMalzeme(malzemeCreateDto);
     }
 
     // Malzeme güncellemek için endpoint
     @PutMapping("/update/{id}")
-    public ResponseEntity<MalzemeResponseDto> updateMalzeme(@PathVariable Long id, @RequestBody MalzemeUpdateDto updateDto) {
+    public ResponseEntity<MalzemeResponseDto> updateMalzeme(@PathVariable Long id, @Valid @RequestBody MalzemeUpdateDto updateDto) {
         MalzemeResponseDto guncellenenMalzeme = malzemeService.updateMalzeme(id, updateDto);
         return ResponseEntity.ok(guncellenenMalzeme);
     }

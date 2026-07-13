@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 
 @CrossOrigin // bir porttan diğerine istek atabilmek için
 @RestController // bu sınıfın bir controller olduğunu belirtir
@@ -38,13 +39,13 @@ public class MalzemeTurController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<MalzemeTurResponseDto> createMalzemeTur(@RequestBody MalzemeTurCreateDto createDto) {
+    public ResponseEntity<MalzemeTurResponseDto> createMalzemeTur(@Valid @RequestBody MalzemeTurCreateDto createDto) {
         MalzemeTurResponseDto yeniTur = malzemeTurService.createMalzemeTur(createDto);
         return ResponseEntity.ok(yeniTur);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<MalzemeTurResponseDto> updateMalzemeTur(@PathVariable Long id, @RequestBody MalzemeTurUpdateDto updateDto) {
+    public ResponseEntity<MalzemeTurResponseDto> updateMalzemeTur(@PathVariable Long id, @Valid @RequestBody MalzemeTurUpdateDto updateDto) {
         return ResponseEntity.ok(malzemeTurService.updateMalzemeTur(id, updateDto));
     }
 
