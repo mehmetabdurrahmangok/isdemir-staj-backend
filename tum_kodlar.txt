@@ -1,0 +1,1012 @@
+﻿==== \src\main\java\com\isdemirstaj\backend\BackendApplication.java ====
+package com.isdemirstaj.backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+@SpringBootApplication
+@EnableJpaAuditing
+public class BackendApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BackendApplication.class, args);
+	}
+
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\controller\MalzemeController.java ====
+package com.isdemirstaj.backend.controller;
+
+import com.isdemirstaj.backend.dto.malzeme.MalzemeCreateDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeDetayResponseDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeUpdateDto;
+import com.isdemirstaj.backend.service.MalzemeService;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@CrossOrigin // bir porttan diÄŸerine istek atabilmek iÃ§in
+@RestController // bu sÄ±nÄ±fÄ±n controller olduÄŸunu belirtir
+@RequestMapping("/api/malzemeler") // bu controllerin hangi endpoint ile iliÅŸkilendirileceÄŸini belirtir
+public class MalzemeController {
+
+    private final MalzemeService malzemeService;
+
+    public MalzemeController(MalzemeService malzemeService) {
+        this.malzemeService = malzemeService;
+    }
+
+    // BÃ¼tÃ¼n malzemeleri listeleyen endpoint
+    @GetMapping
+    public List<MalzemeResponseDto> getMalzeme() {
+        return malzemeService.getAllMalzemeler();
+    }
+
+    // ilerde buraya malzeme kodu ile malzeme ve tÃ¼rÃ¼nÃ¼ getiren bir endpoint eklenecek
+
+    // buraya silme ekleme ve gÃ¼ncelleme endpointleri eklenecek
+    // yeni malzeme eklemek iÃ§in olan endpoint
+    @PostMapping("/create")
+    public MalzemeResponseDto createMalzeme(@RequestBody MalzemeCreateDto malzemeCreateDto) {
+        return malzemeService.createMalzeme(malzemeCreateDto);
+    }
+
+    // Malzeme gÃ¼ncellemek iÃ§in endpoint
+    @PutMapping("/update/{id}")
+    public ResponseEntity<MalzemeResponseDto> updateMalzeme(@PathVariable Long id, @RequestBody MalzemeUpdateDto updateDto) {
+        MalzemeResponseDto guncellenenMalzeme = malzemeService.updateMalzeme(id, updateDto);
+        return ResponseEntity.ok(guncellenenMalzeme);
+    }
+
+    // malzeme silmek iÃ§in endpoint
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMalzeme(@PathVariable Long id) {
+        malzemeService.deleteMalzeme(id);
+        return ResponseEntity.noContent().build(); // 204 No Content dÃ¶ner (BaÅŸarÄ±lÄ± ama iÃ§erik yok)
+    }
+
+    // koda gÃ¶re malzeme Ã§ekmek iÃ§in endpoint
+    @GetMapping("/detay/{malzemeKodu}")
+    public ResponseEntity<MalzemeDetayResponseDto> getMalzemeDetayByKodu(@PathVariable String malzemeKodu) {
+        MalzemeDetayResponseDto detay = malzemeService.getMalzemeDetayByKodu(malzemeKodu);
+        return ResponseEntity.ok(detay);
+    }
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\controller\MalzemeHareketController.java ====
+package com.isdemirstaj.backend.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketCreateDto;
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketResponseDto;
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketUpdateDto;
+import com.isdemirstaj.backend.service.MalzemeHareketService;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/api/malzemeHareketleri")
+public class MalzemeHareketController {
+    private final MalzemeHareketService malzemeHareketService;
+
+    public MalzemeHareketController(MalzemeHareketService malzemeHareketService) {
+        this.malzemeHareketService = malzemeHareketService;
+    }
+
+    // bÃ¼tÃ¼n malzeme hareketlerini listeleyen endpoint
+    @GetMapping
+    public List<MalzemeHareketResponseDto> getMalzemeHareketleri() {
+        return malzemeHareketService.getAllMalzemeHareketleri();
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<MalzemeHareketResponseDto> createMalzemeHareket(@RequestBody MalzemeHareketCreateDto createDto) {
+        MalzemeHareketResponseDto yeniHareket = malzemeHareketService.createMalzemeHareket(createDto);
+        return ResponseEntity.ok(yeniHareket);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<MalzemeHareketResponseDto> updateMalzemeHareket(@PathVariable Long id, @RequestBody MalzemeHareketUpdateDto updateDto) {
+        return ResponseEntity.ok(malzemeHareketService.updateMalzemeHareket(id, updateDto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMalzemeHareket(@PathVariable Long id) {
+        malzemeHareketService.deleteMalzemeHareket(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\controller\MalzemeTurController.java ====
+package com.isdemirstaj.backend.controller;
+
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurCreateDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurResponseDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurUpdateDto;
+import com.isdemirstaj.backend.service.MalzemeTurService;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@CrossOrigin // bir porttan diÄŸerine istek atabilmek iÃ§in
+@RestController // bu sÄ±nÄ±fÄ±n bir controller olduÄŸunu belirtir
+@RequestMapping("/api/malzemeTurleri") // bu controllerin hangi endpoint ile iliÅŸkilendirileceÄŸini belirtir
+public class MalzemeTurController {
+
+    private final MalzemeTurService malzemeTurService; // MalzemeTurService sÄ±nÄ±fÄ±nÄ±n bir Ã¶rneÄŸini tutar
+    // service fonksiyonlarÄ± controller Ã¼zerinden Ã§aÄŸÄ±rÄ±lÄ±r
+
+    public MalzemeTurController(MalzemeTurService malzemeTurService) {
+        this.malzemeTurService = malzemeTurService;
+    } // constructor injection yÃ¶ntemi ile MalzemeTurService sÄ±nÄ±fÄ±nÄ±n bir Ã¶rneÄŸini alÄ±r
+
+    // BÃ¼tÃ¼n malzeme tÃ¼rlerini listeleyen endpoint
+    @GetMapping
+    public List<MalzemeTurResponseDto> getMalzemeTurleri() {
+        return malzemeTurService.getAllMalzemeTurleri();
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<MalzemeTurResponseDto> createMalzemeTur(@RequestBody MalzemeTurCreateDto createDto) {
+        MalzemeTurResponseDto yeniTur = malzemeTurService.createMalzemeTur(createDto);
+        return ResponseEntity.ok(yeniTur);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<MalzemeTurResponseDto> updateMalzemeTur(@PathVariable Long id, @RequestBody MalzemeTurUpdateDto updateDto) {
+        return ResponseEntity.ok(malzemeTurService.updateMalzemeTur(id, updateDto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMalzemeTur(@PathVariable Long id) {
+        malzemeTurService.deleteMalzemeTur(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzeme\MalzemeCreateDto.java ====
+package com.isdemirstaj.backend.dto.malzeme;
+
+import com.isdemirstaj.backend.entity.enums.MenseiEnum;
+
+import lombok.Data;
+import lombok.Getter;
+
+@Data
+@Getter
+public class MalzemeCreateDto { // Malzeme entity'sinin oluÅŸturulmasÄ± iÃ§in kullanÄ±lan DTO sÄ±nÄ±fÄ±
+
+    private String malzemeKodu;
+    private String malzemeAdi;
+    private Long malzemeTurId;
+    private MenseiEnum mensei;
+    private String oper;
+
+    
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzeme\MalzemeDetayResponseDto.java ====
+package com.isdemirstaj.backend.dto.malzeme;
+
+import java.math.BigDecimal;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MalzemeDetayResponseDto {
+    private Long id;
+    private String malzemeKodu;
+    private String malzemeAdi;
+    private Long malzemeTurId;
+    private String malzemeTurAdi;
+    private String mensei;
+    private BigDecimal mevcutMiktar; // Bir Ã¶nceki gÃ¶revde hesapladÄ±ÄŸÄ±mÄ±z net stok
+    private List<HareketDetayDto> hareketler; // GeÃ§miÅŸ hareketlerin listesi
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HareketDetayDto {
+        private Long id;
+        private java.time.LocalDateTime hareketTarihi;
+        private BigDecimal miktar;
+        private String hareketTuru;
+    }
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzeme\MalzemeResponseDto.java ====
+package com.isdemirstaj.backend.dto.malzeme;
+
+import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MalzemeResponseDto { 
+    private Long id;
+    private String malzemeKodu;
+    private String malzemeAdi;
+    private Long malzemeTurId;
+    private String malzemeTurAdi;
+    private String mensei;
+    private BigDecimal mevcutMiktar;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzeme\MalzemeUpdateDto.java ====
+package com.isdemirstaj.backend.dto.malzeme;
+
+import com.isdemirstaj.backend.entity.enums.MenseiEnum;
+import lombok.Data;
+
+@Data
+public class MalzemeUpdateDto {
+    private String malzemeKodu;
+    private String malzemeAdi;
+    private Long malzemeTurId;
+    private MenseiEnum mensei;
+    private String oper;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeHareket\MalzemeHareketCreateDto.java ====
+package com.isdemirstaj.backend.dto.malzemeHareket;
+
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import lombok.Data;
+
+@Data
+public class MalzemeHareketCreateDto {
+    private Long malzemeId;
+    private LocalDateTime hareketTarihi;
+    private BigDecimal miktar;
+    private String hareketTuru;
+    private String oper;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeHareket\MalzemeHareketResponseDto.java ====
+package com.isdemirstaj.backend.dto.malzemeHareket;
+
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MalzemeHareketResponseDto {
+    private Long id;
+    private MalzemeResponseDto malzeme;
+    private LocalDateTime hareketTarihi;
+    private BigDecimal miktar;
+    private String hareketTuru;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeHareket\MalzemeHareketUpdateDto.java ====
+package com.isdemirstaj.backend.dto.malzemeHareket;
+
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import lombok.Data;
+
+@Data
+public class MalzemeHareketUpdateDto {
+    private Long malzemeId;
+    private LocalDateTime hareketTarihi;
+    private BigDecimal miktar;
+    private String hareketTuru;
+    private String oper;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeTur\MalzemeTurCreateDto.java ====
+package com.isdemirstaj.backend.dto.malzemeTur;
+
+import lombok.Data;
+
+@Data
+public class MalzemeTurCreateDto {
+    private String malzemeTurAdi;
+    private String oper;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeTur\MalzemeTurResponseDto.java ====
+package com.isdemirstaj.backend.dto.malzemeTur;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MalzemeTurResponseDto {
+    private Long id;
+    private String malzemeTurAdi;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\dto\malzemeTur\MalzemeTurUpdateDto.java ====
+package com.isdemirstaj.backend.dto.malzemeTur;
+
+import lombok.Data;
+
+@Data
+public class MalzemeTurUpdateDto {
+    private String malzemeTurAdi;
+    private String oper;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\BaseEntity.java ====
+package com.isdemirstaj.backend.entity;
+
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseEntity { // BaseEntity adÄ±nda bir abstract sÄ±nÄ±f tanÄ±mlar ve diÄŸer entity sÄ±nÄ±flarÄ±nÄ±n temelini oluÅŸturur
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_sequence")
+    @SequenceGenerator(name = "base_sequence", sequenceName = "HIBERNATE_SEQUENCE", allocationSize = 1)
+    private Long id;
+
+    @Column(name = "OPER")
+    private String oper;
+
+    @CreatedDate
+    @Column(name = "CREATED_AT", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_AT")
+    private LocalDateTime updatedAt;
+
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\MalzemeEntity.java ====
+package com.isdemirstaj.backend.entity;
+
+import com.isdemirstaj.backend.entity.enums.MenseiEnum;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "MALZEME_TANIM_TBL")
+public class MalzemeEntity extends BaseEntity { // Malzeme tablosunu temsil eden entity sÄ±nÄ±fÄ±
+
+    public MalzemeEntity(String malzemeKodu, String malzemeAdi, MalzemeTurEntity malzemeTur, MenseiEnum mensei) {
+        this.malzemeKodu = malzemeKodu;
+        this. malzemeAdi = malzemeAdi;
+        this.mensei = mensei;
+        this.malzemeTur = malzemeTur;
+    }
+    
+    @ManyToOne
+    @JoinColumn(name = "MALZEME_TUR_ID", referencedColumnName = "ID")
+    private MalzemeTurEntity malzemeTur;
+
+    @Column(name = "MALZEME_KODU", unique = true)
+    private String malzemeKodu;
+
+    @Column(name = "MALZEME_ADI")
+    private String malzemeAdi;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MENSEI")
+    private MenseiEnum mensei;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\MalzemeHareketEntity.java ====
+package com.isdemirstaj.backend.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+
+import com.isdemirstaj.backend.entity.enums.HareketTuruEnum;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "MALZEME_HAREKET_TBL")
+public class MalzemeHareketEntity extends BaseEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "MLZ_ID", referencedColumnName = "ID")
+    private MalzemeEntity malzeme;
+
+    @Column(name = "TARIH")
+    private LocalDateTime hareketTarihi;
+ 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "HAREKET_TURU")
+    private HareketTuruEnum hareketTuru;
+
+    @Column(name = "MIKTAR")
+    private BigDecimal miktar;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\MalzemeTurEntity.java ====
+package com.isdemirstaj.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "MALZEME_TURU_TANIM_TBL")
+@NoArgsConstructor
+@Getter
+@Setter
+public class MalzemeTurEntity extends BaseEntity { // MalzemeTur tablosunu temsil eden entity sÄ±nÄ±fÄ±
+
+    @Column(name = "MALZEME_TURU", nullable = false, unique = true)
+    private String malzemeTurAdi;
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\enums\HareketTuruEnum.java ====
+package com.isdemirstaj.backend.entity.enums;
+
+public enum HareketTuruEnum { // HareketTuruEnum adÄ±nda bir enum sÄ±nÄ±fÄ± tanÄ±mlar
+    GELEN,
+    URETIM,
+    TUKETIM,
+    SATIS
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\entity\enums\MenseiEnum.java ====
+package com.isdemirstaj.backend.entity.enums;
+
+public enum MenseiEnum {
+    YERLI,
+    ITHAL
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\repository\MalzemeHareketRepository.java ====
+package com.isdemirstaj.backend.repository;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface MalzemeHareketRepository extends JpaRepository<MalzemeHareketEntity, Long> {
+    @Query(value = "SELECT COALESCE(SUM(CASE " +
+               "WHEN HAREKET_TURU IN ('GELEN', 'URETIM') THEN MIKTAR " +
+               "WHEN HAREKET_TURU IN ('TUKETIM', 'SATIS') THEN -MIKTAR " +
+               "ELSE 0 END), 0) " +
+               "FROM MALZEME_HAREKET_TBL WHERE MLZ_ID = :malzemeId",
+       nativeQuery = true)
+    public BigDecimal hesaplaMevcutStok(@Param("malzemeId") Long malzemeId);
+
+    List<MalzemeHareketEntity> findByMalzemeId(Long malzemeId);
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\repository\MalzemeRepository.java ====
+package com.isdemirstaj.backend.repository;
+
+import com.isdemirstaj.backend.entity.MalzemeEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface MalzemeRepository extends JpaRepository<MalzemeEntity, Long> {
+    // Malzeme sÄ±nÄ±fÄ± iÃ§in repository arayÃ¼zÃ¼, JpaRepository'yi geniÅŸletir ve MalzemeEntity ile Long tipinde birincil anahtar kullanÄ±r.
+    Optional<MalzemeEntity> findByMalzemeKodu(String malzemeKodu);
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\repository\MalzemeTurRepository.java ====
+package com.isdemirstaj.backend.repository;
+
+import com.isdemirstaj.backend.entity.MalzemeTurEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+// MalzemeTur sÄ±nÄ±fÄ± iÃ§in repository arayÃ¼zÃ¼, JpaRepository'yi geniÅŸletir ve MalzemeTurEntity ile Long tipinde birincil anahtar kullanÄ±r.
+public interface MalzemeTurRepository extends JpaRepository<MalzemeTurEntity, Long> {
+    
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\service\MalzemeHareketService.java ====
+package com.isdemirstaj.backend.service;
+
+import com.isdemirstaj.backend.repository.MalzemeHareketRepository;
+import com.isdemirstaj.backend.repository.MalzemeRepository;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketCreateDto;
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketResponseDto;
+import com.isdemirstaj.backend.dto.malzemeHareket.MalzemeHareketUpdateDto;
+import com.isdemirstaj.backend.entity.MalzemeEntity;
+import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
+import com.isdemirstaj.backend.entity.enums.HareketTuruEnum;
+
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.math.BigDecimal;
+
+@Service
+public class MalzemeHareketService {
+    private final MalzemeHareketRepository malzemeHareketRepository;
+    private final MalzemeRepository malzemeRepository;
+
+    public MalzemeHareketService(MalzemeHareketRepository malzemeHareketRepository, MalzemeRepository malzemeRepository) {
+        this.malzemeHareketRepository = malzemeHareketRepository;
+        this.malzemeRepository = malzemeRepository;
+    }
+
+    // BÃ¼tÃ¼n malzeme hareketlerini listeleyen ve dÃ¶ndÃ¼ren metod
+    public List<MalzemeHareketResponseDto> getAllMalzemeHareketleri() {
+        List<MalzemeHareketEntity> malzemeHareketleri = malzemeHareketRepository.findAll();
+
+        return malzemeHareketleri.stream()
+                .map(malzemeHareket -> {
+                    // Malzemenin gÃ¼ncel stok durumunu anlÄ±k olarak Ã§ekiyoruz
+                    BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzemeHareket.getMalzeme().getId());
+                    
+                    return new MalzemeHareketResponseDto(
+                        malzemeHareket.getId(),
+                        new MalzemeResponseDto(
+                            malzemeHareket.getMalzeme().getId(),
+                            malzemeHareket.getMalzeme().getMalzemeKodu(),
+                            malzemeHareket.getMalzeme().getMalzemeAdi(),
+                            malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getId() : null,
+                            malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
+                            malzemeHareket.getMalzeme().getMensei() != null ? malzemeHareket.getMalzeme().getMensei().name() : "-",
+                            anlikStok // 7. Parametre eklendi
+                        ),
+                        malzemeHareket.getHareketTarihi(),
+                        malzemeHareket.getMiktar(),
+                        malzemeHareket.getHareketTuru().toString()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    // --- HAREKET EKLEME Ä°ÅLEMÄ° ---
+    public MalzemeHareketResponseDto createMalzemeHareket(MalzemeHareketCreateDto createDto) {
+        // Ä°lgili malzemeyi bul
+        MalzemeEntity malzeme = malzemeRepository.findById(createDto.getMalzemeId())
+            .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme bulunamadÄ±"));
+
+        MalzemeHareketEntity yeniHareket = new MalzemeHareketEntity();
+        yeniHareket.setMalzeme(malzeme);
+        yeniHareket.setHareketTarihi(createDto.getHareketTarihi());
+        yeniHareket.setMiktar(createDto.getMiktar());
+        yeniHareket.setHareketTuru(HareketTuruEnum.valueOf(createDto.getHareketTuru().toUpperCase()));
+        yeniHareket.setOper(createDto.getOper());
+
+        malzemeHareketRepository.save(yeniHareket);
+        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
+
+        // Ä°Ã§ iÃ§e geÃ§miÅŸ (nested) DTO yapÄ±mÄ±zla yanÄ±tÄ± dÃ¶nÃ¼yoruz
+        return new MalzemeHareketResponseDto(
+            yeniHareket.getId(),
+            new MalzemeResponseDto(
+                malzeme.getId(),
+                malzeme.getMalzemeKodu(),
+                malzeme.getMalzemeAdi(),
+                malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
+                malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
+                malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
+                anlikStok
+            ),
+            yeniHareket.getHareketTarihi(),
+            yeniHareket.getMiktar(),
+            yeniHareket.getHareketTuru().toString()
+        );
+    }
+
+    // --- HAREKET SÄ°LME Ä°ÅLEMÄ° ---
+    public void deleteMalzemeHareket(Long id) {
+        if (!malzemeHareketRepository.existsById(id)) {
+            throw new RuntimeException("Silinmek istenen hareket bulunamadÄ±. ID: " + id);
+        }
+        malzemeHareketRepository.deleteById(id);
+    }
+
+    // --- HAREKET GÃœNCELLEME Ä°ÅLEMÄ° ---
+    public MalzemeHareketResponseDto updateMalzemeHareket(Long id, MalzemeHareketUpdateDto updateDto) {
+        MalzemeHareketEntity mevcutHareket = malzemeHareketRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("GÃ¼ncellenecek hareket bulunamadÄ±. ID: " + id));
+
+        // EÄŸer harekete baÄŸlÄ± malzeme de deÄŸiÅŸtirilmek isteniyorsa onu bul
+        if (!mevcutHareket.getMalzeme().getId().equals(updateDto.getMalzemeId())) {
+            MalzemeEntity yeniMalzeme = malzemeRepository.findById(updateDto.getMalzemeId())
+                .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme bulunamadÄ±"));
+            mevcutHareket.setMalzeme(yeniMalzeme);
+        }
+
+        mevcutHareket.setHareketTarihi(updateDto.getHareketTarihi());
+        mevcutHareket.setMiktar(updateDto.getMiktar());
+        
+        // Enum varsayÄ±mÄ± Ã¼zerinden hareket tÃ¼rÃ¼nÃ¼ ayarlÄ±yoruz
+        // (HareketTuruEnum adÄ±nda bir enum kullandÄ±ÄŸÄ±nÄ± varsayarak valueOf ile dÃ¶nÃ¼ÅŸtÃ¼rÃ¼yoruz)
+        mevcutHareket.setHareketTuru(HareketTuruEnum.valueOf(updateDto.getHareketTuru().toUpperCase()));
+        mevcutHareket.setOper(updateDto.getOper());
+
+        malzemeHareketRepository.save(mevcutHareket);
+
+        BigDecimal anlikHareket = malzemeHareketRepository.hesaplaMevcutStok(mevcutHareket.getMalzeme().getId());
+
+        // GÃ¼ncel veriyi Response DTO'ya dÃ¶nÃ¼ÅŸtÃ¼rÃ¼p geri yolluyoruz
+        return new MalzemeHareketResponseDto(
+            mevcutHareket.getId(),
+            new MalzemeResponseDto(
+                mevcutHareket.getMalzeme().getId(),
+                mevcutHareket.getMalzeme().getMalzemeKodu(),
+                mevcutHareket.getMalzeme().getMalzemeAdi(),
+                mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getId() : null,
+                mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
+                mevcutHareket.getMalzeme().getMensei() != null ? mevcutHareket.getMalzeme().getMensei().name() : "-",
+                anlikHareket
+            ),
+            mevcutHareket.getHareketTarihi(),
+            mevcutHareket.getMiktar(),
+            mevcutHareket.getHareketTuru().toString()
+        );
+    }
+    
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\service\MalzemeService.java ====
+package com.isdemirstaj.backend.service;
+
+import com.isdemirstaj.backend.dto.malzeme.MalzemeCreateDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeDetayResponseDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
+import com.isdemirstaj.backend.dto.malzeme.MalzemeUpdateDto;
+import com.isdemirstaj.backend.entity.MalzemeEntity;
+import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
+import com.isdemirstaj.backend.entity.MalzemeTurEntity;
+import com.isdemirstaj.backend.repository.MalzemeHareketRepository;
+import com.isdemirstaj.backend.repository.MalzemeRepository;
+import com.isdemirstaj.backend.repository.MalzemeTurRepository;
+
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iÅŸ mantÄ±ÄŸÄ±nÄ± iÃ§erir ve MalzemeRepository'yi kullanÄ±r.
+    
+    private final MalzemeRepository malzemeRepository; // MalzemeRepository'yi kullanmak iÃ§in bir alan tanÄ±mlanÄ±r.
+    private final MalzemeTurRepository malzemeTurRepository; // malzeme tÃ¼r repository si
+    private final MalzemeHareketRepository malzemeHareketRepository;
+
+    public MalzemeService(MalzemeRepository malzemeRepository,
+                            MalzemeTurRepository malzemeTurRepository,
+                            MalzemeHareketRepository malzemeHareketRepository) { // MalzemeService sÄ±nÄ±fÄ±nÄ±n yapÄ±cÄ± metodu, MalzemeRepository'yi alÄ±r ve alanÄ± baÅŸlatÄ±r.
+        this.malzemeRepository = malzemeRepository;
+        this.malzemeTurRepository = malzemeTurRepository;
+        this.malzemeHareketRepository = malzemeHareketRepository;
+    }
+
+    // BÃ¼tÃ¼n malzemeleri listeleyen ve dÃ¶ndÃ¼ren metod
+    public List<MalzemeResponseDto> getAllMalzemeler() {
+        List<MalzemeEntity> malzemeler = malzemeRepository.findAll();
+        
+        return malzemeler.stream()
+                .map(malzeme -> {
+                    // Her malzeme iÃ§in veritabanÄ±ndan gÃ¼ncel stok durumunu anlÄ±k olarak Ã§ekiyoruz
+                    BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
+                    
+                    return new MalzemeResponseDto(
+                        malzeme.getId(),
+                        malzeme.getMalzemeKodu(),
+                        malzeme.getMalzemeAdi(),
+                        malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
+                        malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
+                        malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
+                        anlikStok // Dinamik hesaplanan deÄŸer DTO'ya eklendi
+                    );
+                })
+                .collect(Collectors.toList());
+
+    } // bÃ¼tÃ¼n malzemeleri listeleyen ve dÃ¶ndÃ¼ren metod
+
+    public MalzemeResponseDto createMalzeme(MalzemeCreateDto malzemeCreateDto) {
+
+        MalzemeTurEntity malzemeTur = malzemeTurRepository.findById(malzemeCreateDto.getMalzemeTurId())
+            .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme tÃ¼rÃ¼ bulunamadÄ±"));
+
+        MalzemeEntity malzemeEntity = new MalzemeEntity(
+            malzemeCreateDto.getMalzemeKodu(),
+            malzemeCreateDto.getMalzemeAdi(),
+            malzemeTur,
+            malzemeCreateDto.getMensei()
+        );
+        malzemeEntity.setOper(malzemeCreateDto.getOper());
+        // Orijinal kodda kayÄ±t iÅŸlemi eksikti, veritabanÄ±na kaydetmek iÃ§in save metodunu Ã§aÄŸÄ±rÄ±yoruz.
+        malzemeRepository.save(malzemeEntity);
+
+        return new MalzemeResponseDto(
+            malzemeEntity.getId(),
+            malzemeEntity.getMalzemeKodu(),
+            malzemeEntity.getMalzemeAdi(),
+            malzemeTur.getId(),
+            malzemeTur.getMalzemeTurAdi(),
+            malzemeEntity.getMensei().name(),
+            BigDecimal.ZERO
+        );
+    }
+
+    // Malzeme silen metod
+    public void deleteMalzeme(Long id) {
+        if (!malzemeRepository.existsById(id)) {
+            throw new RuntimeException("Silinmek istenen malzeme bulunamadÄ±. ID: " + id);
+        }
+        malzemeRepository.deleteById(id);
+    }
+
+    // Malzeme gÃ¼ncelleyen metod
+    public MalzemeResponseDto updateMalzeme(Long id, MalzemeUpdateDto updateDto) {
+        // 1. GÃ¼ncellenecek malzemeyi veritabanÄ±ndan bul
+        MalzemeEntity mevcutMalzeme = malzemeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("GÃ¼ncellenecek malzeme bulunamadÄ±. ID: " + id));
+
+        // 2. Yeni atanan malzeme tÃ¼rÃ¼nÃ¼ doÄŸrula
+        MalzemeTurEntity malzemeTur = malzemeTurRepository.findById(updateDto.getMalzemeTurId())
+            .orElseThrow(() -> new RuntimeException("Belirtilen id'ye uygun malzeme tÃ¼rÃ¼ bulunamadÄ±"));
+
+        // 3. Mevcut malzemenin verilerini yeni gelen verilerle deÄŸiÅŸtir
+        mevcutMalzeme.setMalzemeKodu(updateDto.getMalzemeKodu());
+        mevcutMalzeme.setMalzemeAdi(updateDto.getMalzemeAdi());
+        mevcutMalzeme.setMalzemeTur(malzemeTur);
+        mevcutMalzeme.setMensei(updateDto.getMensei());
+        mevcutMalzeme.setOper(updateDto.getOper());
+        
+        // 4. VeritabanÄ±na kaydet
+        malzemeRepository.save(mevcutMalzeme);
+
+        // 5. gÃ¼ncel stok miktarÄ±nÄ± veri tabanÄ±ndan anlÄ±k olarak hesaplat
+        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(id);
+
+        // 5. GÃ¼ncellenmiÅŸ veriyi ResponseDto olarak geri dÃ¶n
+        return new MalzemeResponseDto(
+            mevcutMalzeme.getId(),
+            mevcutMalzeme.getMalzemeKodu(),
+            mevcutMalzeme.getMalzemeAdi(),
+            malzemeTur.getId(),
+            malzemeTur.getMalzemeTurAdi(),
+            mevcutMalzeme.getMensei().name(),
+            anlikStok
+        );
+    }
+
+    // Malzeme kodundan malzeme detaylarÄ±na getiren fonksiyon 
+    public MalzemeDetayResponseDto getMalzemeDetayByKodu(String malzemeKodu) {
+        // malzemeyi koduna gÃ¶re veri tabanÄ±ndan getir
+        MalzemeEntity malzeme = malzemeRepository.findByMalzemeKodu(malzemeKodu)
+            .orElseThrow(() -> new RuntimeException("bu koda sahip bir malzeme bulunamadÄ±"));
+
+        // AnlÄ±k stok hesaplama
+        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
+
+        // Malzemeye ait hareketleri bul ve DTO oluÅŸtur
+        List<MalzemeHareketEntity> hareketEntities = malzemeHareketRepository.findByMalzemeId(malzeme.getId());
+
+        List<MalzemeDetayResponseDto.HareketDetayDto> hareketler = hareketEntities.stream()
+            .map(h -> new MalzemeDetayResponseDto.HareketDetayDto(
+                h.getId(),
+                h.getHareketTarihi(),
+                h.getMiktar(),
+                h.getHareketTuru().toString()
+            )).toList();
+
+        // herÅŸeyi birleÅŸtir ve dÃ¶ndÃ¼r
+        return new MalzemeDetayResponseDto(
+            malzeme.getId(),
+            malzeme.getMalzemeKodu(),
+            malzeme.getMalzemeAdi(),
+            malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
+            malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
+            malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
+            anlikStok,
+            hareketler
+        );
+    }
+
+}
+
+
+==== \src\main\java\com\isdemirstaj\backend\service\MalzemeTurService.java ====
+package com.isdemirstaj.backend.service;
+
+import org.springframework.stereotype.Service;
+
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurCreateDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurResponseDto;
+import com.isdemirstaj.backend.dto.malzemeTur.MalzemeTurUpdateDto;
+import com.isdemirstaj.backend.entity.MalzemeTurEntity;
+import com.isdemirstaj.backend.repository.MalzemeTurRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class MalzemeTurService { // Malzeme tÃ¼rleri ile ilgili iÅŸlemleri gerÃ§ekleÅŸtiren servis sÄ±nÄ±fÄ±
+    private final MalzemeTurRepository malzemeTurRepository;
+
+    public MalzemeTurService(MalzemeTurRepository malzemeTurRepository) {
+        this.malzemeTurRepository = malzemeTurRepository;
+    }
+
+    // BÃ¼tÃ¼n malzeme tÃ¼rlerini listeleyen ve dÃ¶ndÃ¼ren metod
+    public List<MalzemeTurResponseDto> getAllMalzemeTurleri() {
+        List<MalzemeTurEntity> malzemeTurleri = malzemeTurRepository.findAll();
+
+        return malzemeTurleri.stream()
+                .map(malzemeTur -> new MalzemeTurResponseDto(
+                    malzemeTur.getId(),
+                    malzemeTur.getMalzemeTurAdi()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // malzeme tÃ¼rÃ¼ ekleme metodu
+    public MalzemeTurResponseDto createMalzemeTur(MalzemeTurCreateDto createDto) {
+        MalzemeTurEntity malzemeTur = new MalzemeTurEntity();
+        malzemeTur.setMalzemeTurAdi(createDto.getMalzemeTurAdi());
+        malzemeTur.setOper(createDto.getOper());
+        
+        malzemeTurRepository.save(malzemeTur);
+
+        return new MalzemeTurResponseDto(
+            malzemeTur.getId(),
+            malzemeTur.getMalzemeTurAdi()
+        );
+    }
+
+    // malzeme tÃ¼rÃ¼ silme
+    public void deleteMalzemeTur(Long id) {
+        if(!malzemeTurRepository.existsById(id)) {
+            throw new RuntimeException("Silinmek istenen malzeme bulunamadÄ±");
+        }
+        malzemeTurRepository.deleteById(id);
+    }
+
+    // Malzeme tÃ¼rÃ¼ gÃ¼ncelleme metodu
+    public MalzemeTurResponseDto updateMalzemeTur(Long id, MalzemeTurUpdateDto updateDto) {
+        MalzemeTurEntity mevcutTur = malzemeTurRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("GÃ¼ncellenecek malzeme tÃ¼rÃ¼ bulunamadÄ±"));
+
+        mevcutTur.setMalzemeTurAdi(updateDto.getMalzemeTurAdi());
+        mevcutTur.setOper(updateDto.getOper());
+
+        malzemeTurRepository.save(mevcutTur);
+
+        return new MalzemeTurResponseDto(
+            mevcutTur.getId(),
+            mevcutTur.getMalzemeTurAdi()
+        );
+    }
+}
+
+
+==== \src\test\java\com\isdemirstaj\backend\BackendApplicationTests.java ====
+package com.isdemirstaj.backend;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class BackendApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+
+
