@@ -24,8 +24,8 @@ import lombok.Setter;
 public abstract class BaseEntity { // BaseEntity adında bir abstract sınıf tanımlar ve diğer entity sınıflarının temelini oluşturur
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_sequence")
-    @SequenceGenerator(name = "base_sequence", sequenceName = "HIBERNATE_SEQUENCE", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@SequenceGenerator(name = "base_sequence", sequenceName = "HIBERNATE_SEQUENCE", allocationSize = 1)
     private Long id;
 
     @Column(name = "OPER")
