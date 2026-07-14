@@ -44,6 +44,7 @@ public class UserService {
                 user.getEmail(),
                 user.getAdSoyad(),
                 user.getRol(),
+                user.getOper(),
                 accessToken,
                 refreshToken
         );
