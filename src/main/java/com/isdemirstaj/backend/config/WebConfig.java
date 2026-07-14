@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Yazdığımız JwtInterceptor güvenlik duvarını tüm /api/ ile başlayan adreslere uyguluyoruz
-       // registry.addInterceptor(jwtInterceptor)
-         //       .addPathPatterns("/api/**");
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**");
     }
 }

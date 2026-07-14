@@ -1,7 +1,6 @@
 package com.isdemirstaj.backend.entity;
 
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -24,8 +23,7 @@ import lombok.Setter;
 public abstract class BaseEntity { // BaseEntity adında bir abstract sınıf tanımlar ve diğer entity sınıflarının temelini oluşturur
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_sequence")
-    @SequenceGenerator(name = "base_sequence", sequenceName = "HIBERNATE_SEQUENCE", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "OPER")
