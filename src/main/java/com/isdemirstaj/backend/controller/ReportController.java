@@ -18,7 +18,11 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
+<<<<<<< Updated upstream
 @CrossOrigin(origins = "*") // Eğer frontend'den CORS hatası alırsanız burayı açabilirsiniz
+=======
+    @CrossOrigin(origins = "*") // Eğer frontend'den CORS hatası alırsanız burayı açabilirsiniz
+>>>>>>> Stashed changes
 public class ReportController {
 
     private final ReportService reportService;
