@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
-// @CrossOrigin(origins = "*") // Eğer frontend'den CORS hatası alırsanız burayı açabilirsiniz
+@CrossOrigin(origins = "*") // Eğer frontend'den CORS hatası alırsanız burayı açabilirsiniz
 public class ReportController {
 
     private final ReportService reportService;
@@ -45,12 +45,14 @@ public class ReportController {
         try {
             // Önce veriyi oluştur, sonra Excel'e çevir
             ReportResponseDTO report = reportService.generatePivotReport(hareketTuru, startDate, endDate);
-            byte[] excelData = excelExportService.exportPivotToExcel(report);
+            String baslik = hareketTuru.name() + " Malzeme Raporu";
+            byte[] excelData = excelExportService.exportPivotToExcel(report, baslik);
 
             // Dosya indirme başlıkları (Headers) ayarlanıyor
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-            headers.setContentDispositionFormData("attachment", "Hareket_Raporu.xlsx");
+
+            headers.setContentDispositionFormData("attachment", "Hareket_Raporu.xlsx");            
 
             return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
 

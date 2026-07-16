@@ -32,17 +32,28 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 3. İstekteki "Authorization" başlığını oku
+                // 3. İstekteki "Authorization" başlığını oku
+        String token = null;
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+        // Önce Header'a bak
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7); // "Bearer " sonrasını al
+        } 
+        // Eğer Header boşsa (Chrome gibi linkten gelmişse), URL parametresine bak
+        else {
+            token = request.getParameter("token");
+        }
+
+        // Token hiçbir şekilde bulunamadıysa isteği reddet
+        if (token == null || token.trim().isEmpty()) {
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
             response.getWriter().write("{\"message\": \"Yetki anahtarı (Token) bulunamadı!\"}");
             return false; // İsteği durdur
         }
 
-        // 4. Token'ı başlığın içinden ayıkla ve doğrula
-        String token = authHeader.substring(7); // "Bearer " sonrasını al
+        // 4. Bulunan Token'ı doğrula
         if (!jwtService.validateToken(token)) {
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized

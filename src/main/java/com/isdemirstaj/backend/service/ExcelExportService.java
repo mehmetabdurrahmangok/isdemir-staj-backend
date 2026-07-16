@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class ExcelExportService {
     
-        public byte[] exportPivotToExcel(ReportResponseDTO report) throws IOException {
+        public byte[] exportPivotToExcel(ReportResponseDTO report, String raporBasligi) throws IOException {
 
             // Yeni bir çalışma sayfası oluştur (excel)
             try (Workbook workbook = new XSSFWorkbook()) {
@@ -48,6 +48,26 @@ public class ExcelExportService {
                 // Standart Hücre
                 CellStyle normalStyle = workbook.createCellStyle();
                 int rowIdx = 0;
+
+                Row titleRow = sheet.createRow(rowIdx++); // en üste başlık ekleme
+                Cell titleCell = titleRow.createCell(0);
+                titleCell.setCellValue(raporBasligi);
+
+                // Ana başlığın kalın ve büyük görünmesi için basit bir stil
+                CellStyle titleStyle = workbook.createCellStyle();
+                Font titleFont = workbook.createFont();
+                titleFont.setBold(true);
+                titleFont.setFontHeightInPoints((short) 14); // Yazıyı biraz büyüttük
+                titleStyle.setFont(titleFont);
+                titleStyle.setAlignment(HorizontalAlignment.CENTER); // Ortala
+                titleCell.setCellStyle(titleStyle);
+
+                // Başlığı yayma işlemi sütun birleştirme
+                if (report.getColumns().size() > 0) {
+                    sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(0,0,0,
+                    report.getColumns().size()));
+                }
+                
 
                 // Başlık Yazdırma (HEADER)
                 Row headerRow = sheet.createRow(rowIdx++);
