@@ -17,4 +17,6 @@ public class MalzemeHareketResponseDto {
     private LocalDateTime hareketTarihi;
     private BigDecimal miktar;
     private String hareketTuru;
+    private String oper;
+    private LocalDateTime updatedAt;
 }

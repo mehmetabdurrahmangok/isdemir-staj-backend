@@ -26,7 +26,9 @@ public class MalzemeTurService { // Malzeme türleri ile ilgili işlemleri gerç
         return malzemeTurleri.stream()
                 .map(malzemeTur -> new MalzemeTurResponseDto(
                     malzemeTur.getId(),
-                    malzemeTur.getMalzemeTurAdi()
+                    malzemeTur.getMalzemeTurAdi(),
+                    malzemeTur.getOper(),
+                    malzemeTur.getUpdatedAt()
                 ))
                 .collect(Collectors.toList());
     }
@@ -41,7 +43,9 @@ public class MalzemeTurService { // Malzeme türleri ile ilgili işlemleri gerç
 
         return new MalzemeTurResponseDto(
             malzemeTur.getId(),
-            malzemeTur.getMalzemeTurAdi()
+            malzemeTur.getMalzemeTurAdi(),
+            malzemeTur.getOper(),
+            malzemeTur.getUpdatedAt()
         );
     }
 
@@ -65,7 +69,9 @@ public class MalzemeTurService { // Malzeme türleri ile ilgili işlemleri gerç
 
         return new MalzemeTurResponseDto(
             mevcutTur.getId(),
-            mevcutTur.getMalzemeTurAdi()
+            mevcutTur.getMalzemeTurAdi(),
+            mevcutTur.getOper(),
+            mevcutTur.getUpdatedAt()
         );
     }
 }

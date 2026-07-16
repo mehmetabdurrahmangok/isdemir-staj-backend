@@ -1,6 +1,7 @@
 package com.isdemirstaj.backend.dto.malzeme;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class MalzemeResponseDto {
     private String malzemeTurAdi;
     private String mensei;
     private BigDecimal mevcutMiktar;
+    private String oper;
+    private LocalDateTime updatedAt;
 }

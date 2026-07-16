@@ -44,11 +44,15 @@ public class MalzemeHareketService {
                             malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getId() : null,
                             malzemeHareket.getMalzeme().getMalzemeTur() != null ? malzemeHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
                             malzemeHareket.getMalzeme().getMensei() != null ? malzemeHareket.getMalzeme().getMensei().name() : "-",
-                            anlikStok // 7. Parametre eklendi
+                            anlikStok, // 7. Parametre eklendi
+                            malzemeHareket.getMalzeme().getOper(),
+                            malzemeHareket.getMalzeme().getUpdatedAt()
                         ),
                         malzemeHareket.getHareketTarihi(),
                         malzemeHareket.getMiktar(),
-                        malzemeHareket.getHareketTuru().toString()
+                        malzemeHareket.getHareketTuru().toString(),
+                        malzemeHareket.getOper(),
+                        malzemeHareket.getUpdatedAt()
                     );
                 })
                 .collect(Collectors.toList());
@@ -80,11 +84,15 @@ public class MalzemeHareketService {
                 malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
                 malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
                 malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
-                anlikStok
+                anlikStok,
+                malzeme.getOper(),
+                malzeme.getUpdatedAt()
             ),
             yeniHareket.getHareketTarihi(),
             yeniHareket.getMiktar(),
-            yeniHareket.getHareketTuru().toString()
+            yeniHareket.getHareketTuru().toString(),
+            yeniHareket.getOper(),
+            yeniHareket.getUpdatedAt()
         );
     }
 
@@ -130,11 +138,15 @@ public class MalzemeHareketService {
                 mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getId() : null,
                 mevcutHareket.getMalzeme().getMalzemeTur() != null ? mevcutHareket.getMalzeme().getMalzemeTur().getMalzemeTurAdi() : "-",
                 mevcutHareket.getMalzeme().getMensei() != null ? mevcutHareket.getMalzeme().getMensei().name() : "-",
-                anlikHareket
+                anlikHareket,
+                mevcutHareket.getMalzeme().getOper(),
+                mevcutHareket.getMalzeme().getUpdatedAt()
             ),
             mevcutHareket.getHareketTarihi(),
             mevcutHareket.getMiktar(),
-            mevcutHareket.getHareketTuru().toString()
+            mevcutHareket.getHareketTuru().toString(),
+            mevcutHareket.getOper(),
+            mevcutHareket.getUpdatedAt()
         );
     }
     

@@ -17,6 +17,8 @@ public class MalzemeDetayResponseDto {
     private String malzemeTurAdi;
     private String mensei;
     private BigDecimal mevcutMiktar; // Bir önceki görevde hesapladığımız net stok
+    private String oper;
+    private java.time.LocalDateTime updatedAt;
     private List<HareketDetayDto> hareketler; // Geçmiş hareketlerin listesi
 
     @Data
@@ -27,5 +29,7 @@ public class MalzemeDetayResponseDto {
         private java.time.LocalDateTime hareketTarihi;
         private BigDecimal miktar;
         private String hareketTuru;
+        private String oper;
+        private java.time.LocalDateTime updatedAt;
     }
 }

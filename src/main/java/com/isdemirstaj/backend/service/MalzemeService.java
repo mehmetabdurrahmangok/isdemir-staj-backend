@@ -49,7 +49,9 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
                         malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
                         malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
                         malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
-                        anlikStok // Dinamik hesaplanan değer DTO'ya eklendi
+                        anlikStok, // Dinamik hesaplanan değer DTO'ya eklendi
+                        malzeme.getOper(),
+                        malzeme.getUpdatedAt()
                     );
                 })
                 .collect(Collectors.toList());
@@ -78,7 +80,9 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
             malzemeTur.getId(),
             malzemeTur.getMalzemeTurAdi(),
             malzemeEntity.getMensei().name(),
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            malzemeEntity.getOper(),
+            malzemeEntity.getUpdatedAt()
         );
     }
 
@@ -121,7 +125,9 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
             malzemeTur.getId(),
             malzemeTur.getMalzemeTurAdi(),
             mevcutMalzeme.getMensei().name(),
-            anlikStok
+            anlikStok,
+            mevcutMalzeme.getOper(),
+            mevcutMalzeme.getUpdatedAt()
         );
     }
 
@@ -142,7 +148,9 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
                 h.getId(),
                 h.getHareketTarihi(),
                 h.getMiktar(),
-                h.getHareketTuru().toString()
+                h.getHareketTuru().toString(),
+                h.getOper(),
+                h.getUpdatedAt()
             )).toList();
 
         // herşeyi birleştir ve döndür
@@ -154,6 +162,8 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
             malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
             malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
             anlikStok,
+            malzeme.getOper(),
+            malzeme.getUpdatedAt(),
             hareketler
         );
     }
