@@ -67,7 +67,7 @@ public class UserService {
         yeniUser.setAdSoyad(createDto.getAdSoyad());
         yeniUser.setRol("USER"); // Varsayılan rol USER olur
         yeniUser.setAktifMi(true); // Yeni kayıt olanlar otomatik aktiftir
-        yeniUser.setOper(createDto.getOper());
+        yeniUser.setOper(generateUniqueOper());
 
         userRepository.save(yeniUser);
 
@@ -107,4 +107,22 @@ public class UserService {
             throw new RuntimeException("Oturum süresi dolmuş. Lütfen tekrar giriş yapın!");
         }
     }
+    // 1. UserService.java sınıfının en altına ekleyeceğimiz yardımcı metot:
+    private String generateUniqueOper() {
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        String generatedOper;
+        boolean exists;
+    
+    // Benzersiz bir numara bulana kadar döngüyü çalıştır
+        do {
+            // 100000 ile 999999 arasında rastgele 6 haneli bir sayı üretir
+            int num = 100000 + random.nextInt(900000); 
+            generatedOper = String.valueOf(num);
+        
+        // Bu numara veritabanında zaten var mı kontrol et
+            exists = userRepository.existsByOper(generatedOper);
+        } while (exists); // Eğer varsa tekrar üret
+    
+    return generatedOper;
+}
 }

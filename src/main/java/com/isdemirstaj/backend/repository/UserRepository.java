@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     
     // Kullanıcı adı kalktığı için aramayı e-postaya göre yapacak metod:
     Optional<UserEntity> findByEmail(String email);
+    
+    boolean existsByOper(String oper);  
 }
