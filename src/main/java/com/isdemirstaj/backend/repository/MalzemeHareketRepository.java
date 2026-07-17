@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.antlr.v4.runtime.atn.SemanticContext.AND;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
@@ -28,4 +29,8 @@ public interface MalzemeHareketRepository extends JpaRepository<MalzemeHareketEn
         LocalDateTime starDate,
         LocalDateTime endDate
     );
+    // bu fonksiyonun adından dolayı çalıştığı zaman SQL de şu sorgu çalışır
+    // SELECT * FROM malzeme_hareketleri 
+    // WHERE hareket_turu = ? 
+    // AND hareket_tarihi BETWEEN ? AND ?;
 }

@@ -121,7 +121,6 @@ public class ExcelExportService {
                     ReportColumnDTO col = columns.get(i);
                     Cell cell = grandTotalRow.createCell(i + 1);
                 
-                    // Sizin kodunuzdaki rowTotal üzerinden veriyi alıyoruz
                     BigDecimal val = report.getRowTotal().getOrDefault(col.getHeaderName(), BigDecimal.ZERO);
                 
                     if (val.compareTo(BigDecimal.ZERO) == 0) {
