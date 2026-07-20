@@ -5,9 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,13 +15,15 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    // Token imzalamak için kullanılan 256-bit gizli anahtar (Base64 formatında şifrelenmiş)
+    @Value("${jwt.secret}")
+    private String secretString;
 
-    // Token imzalamak için kullanılan gizli anahtar (application.properties'den gelir)
-    private final Key key;
-
-    public JwtService(@Value("${jwt.secret}") String secretString) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretString));
-    }
+    private Key getKey() {
+    return Keys.hmacShaKeyFor(
+            Decoders.BASE64.decode(secretString)
+    );
+}
 
     // Token Süreleri (İstediğiniz gibi ayarlandı):
     private static final long ACCESS_TOKEN_EXPIRATION = 5 * 60 * 1000; // 5 Dakika (milisaniye)  
@@ -38,7 +39,7 @@ public class JwtService {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -48,7 +49,7 @@ public class JwtService {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -89,7 +90,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
