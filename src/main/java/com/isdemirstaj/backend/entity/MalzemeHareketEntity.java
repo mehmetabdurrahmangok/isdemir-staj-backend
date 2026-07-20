@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -18,7 +19,10 @@ import com.isdemirstaj.backend.entity.enums.HareketTuruEnum;
 @Entity
 @Getter
 @Setter
-@Table(name = "MALZEME_HAREKET_TBL")
+@Table(name = "MALZEME_HAREKET_TBL", indexes = {
+    @Index(name = "idx_hareket_mlz_id", columnList = "MLZ_ID"),
+    @Index(name = "idx_hareket_tarih", columnList = "TARIH")
+})
 public class MalzemeHareketEntity extends BaseEntity {
 
     @ManyToOne

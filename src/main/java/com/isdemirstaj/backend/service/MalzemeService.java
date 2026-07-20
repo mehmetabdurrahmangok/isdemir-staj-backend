@@ -4,10 +4,12 @@ import com.isdemirstaj.backend.dto.malzeme.MalzemeCreateDto;
 import com.isdemirstaj.backend.dto.malzeme.MalzemeDetayResponseDto;
 import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
 import com.isdemirstaj.backend.dto.malzeme.MalzemeUpdateDto;
+import com.isdemirstaj.backend.entity.MalzemeDetayViewEntity;
 import com.isdemirstaj.backend.entity.MalzemeEntity;
 import com.isdemirstaj.backend.entity.MalzemeHareketEntity;
 import com.isdemirstaj.backend.entity.MalzemeTurEntity;
 import com.isdemirstaj.backend.exception.ResourceNotFoundException;
+import com.isdemirstaj.backend.repository.MalzemeDetayViewRepository;
 import com.isdemirstaj.backend.repository.MalzemeHareketRepository;
 import com.isdemirstaj.backend.repository.MalzemeRepository;
 import com.isdemirstaj.backend.repository.MalzemeTurRepository;
@@ -24,37 +26,32 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     private final MalzemeRepository malzemeRepository; // MalzemeRepository'yi kullanmak için bir alan tanımlanır.
     private final MalzemeTurRepository malzemeTurRepository; // malzeme tür repository si
     private final MalzemeHareketRepository malzemeHareketRepository;
+    private final MalzemeDetayViewRepository malzemeDetayViewRepository;
 
     public MalzemeService(MalzemeRepository malzemeRepository,
                             MalzemeTurRepository malzemeTurRepository,
-                            MalzemeHareketRepository malzemeHareketRepository) { // MalzemeService sınıfının yapıcı metodu, MalzemeRepository'yi alır ve alanı başlatır.
+                            MalzemeHareketRepository malzemeHareketRepository,
+                            MalzemeDetayViewRepository malzemeDetayViewRepository) { // MalzemeService sınıfının yapıcı metodu, MalzemeRepository'yi alır ve alanı başlatır.
         this.malzemeRepository = malzemeRepository;
         this.malzemeTurRepository = malzemeTurRepository;
         this.malzemeHareketRepository = malzemeHareketRepository;
+        this.malzemeDetayViewRepository = malzemeDetayViewRepository;
     }
 
     // Bütün malzemeleri listeleyen ve döndüren metod
     public List<MalzemeResponseDto> getAllMalzemeler() {
-        List<MalzemeEntity> malzemeler = malzemeRepository.findAll();
-        
-        return malzemeler.stream()
-                .map(malzeme -> {
-                    // Her malzeme için veritabanından güncel stok durumunu anlık olarak çekiyoruz
-                    BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
-                    
-                    return new MalzemeResponseDto(
-                        malzeme.getId(),
-                        malzeme.getMalzemeKodu(),
-                        malzeme.getMalzemeAdi(),
-                        malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
-                        malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
-                        malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
-                        anlikStok, // Dinamik hesaplanan değer DTO'ya eklendi
-                        malzeme.getOper(),
-                        malzeme.getUpdatedAt()
-                    );
-                })
-                .collect(Collectors.toList());
+        // ESKİ HALİ: Her kayıt için ayrı ayrı malzeme.getMalzemeTur().getMalzemeTurAdi() yapıyordun ve null kontrolleri vardı.
+// YENİ HALİ: Null kontrolü ve JOIN'ler veritabanında çözüldüğü için kod tertemiz oldu!
+List<MalzemeDetayViewEntity> viewListesi = malzemeDetayViewRepository.findAll();
+
+return viewListesi.stream().map(v -> {
+    BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(v.getId());
+    return new MalzemeResponseDto(
+        v.getId(), v.getMalzemeKodu(), v.getMalzemeAdi(), 
+        v.getTurId(), v.getTurAdi(), v.getMensei(), 
+        anlikStok, v.getOper(), v.getUpdatedAt()
+    );
+}).collect(Collectors.toList());
 
     } // bütün malzemeleri listeleyen ve döndüren metod
 
@@ -132,39 +129,25 @@ public class MalzemeService { // Malzeme servisi, malzeme ile ilgili iş mantı�
     }
 
     // Malzeme kodundan malzeme detaylarına getiren fonksiyon 
-    public MalzemeDetayResponseDto getMalzemeDetayByKodu(String malzemeKodu) {
-        // malzemeyi koduna göre veri tabanından getir
-        MalzemeEntity malzeme = malzemeRepository.findByMalzemeKodu(malzemeKodu)
-            .orElseThrow(() -> new ResourceNotFoundException("bu koda sahip bir malzeme bulunamadı"));
+        public MalzemeDetayResponseDto getMalzemeDetayByKodu(String malzemeKodu) {
+        // VIEW'DAN ÇEKİYORUZ
+        MalzemeDetayViewEntity v = malzemeDetayViewRepository.findByMalzemeKodu(malzemeKodu)
+            .orElseThrow(() -> new ResourceNotFoundException("Bu koda sahip bir malzeme bulunamadı"));
 
-        // Anlık stok hesaplama
-        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(malzeme.getId());
-
-        // Malzemeye ait hareketleri bul ve DTO oluştur
-        List<MalzemeHareketEntity> hareketEntities = malzemeHareketRepository.findByMalzemeId(malzeme.getId());
+        BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(v.getId());
+        List<MalzemeHareketEntity> hareketEntities = malzemeHareketRepository.findByMalzemeId(v.getId());
 
         List<MalzemeDetayResponseDto.HareketDetayDto> hareketler = hareketEntities.stream()
             .map(h -> new MalzemeDetayResponseDto.HareketDetayDto(
-                h.getId(),
-                h.getHareketTarihi(),
-                h.getMiktar(),
-                h.getHareketTuru().toString(),
-                h.getOper(),
-                h.getUpdatedAt()
+                h.getId(), h.getHareketTarihi(), h.getMiktar(),
+                h.getHareketTuru().toString(), h.getOper(), h.getUpdatedAt()
             )).toList();
 
-        // herşeyi birleştir ve döndür
         return new MalzemeDetayResponseDto(
-            malzeme.getId(),
-            malzeme.getMalzemeKodu(),
-            malzeme.getMalzemeAdi(),
-            malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getId() : null,
-            malzeme.getMalzemeTur() != null ? malzeme.getMalzemeTur().getMalzemeTurAdi() : "-",
-            malzeme.getMensei() != null ? malzeme.getMensei().name() : "-",
-            anlikStok,
-            malzeme.getOper(),
-            malzeme.getUpdatedAt(),
-            hareketler
+            v.getId(), v.getMalzemeKodu(), v.getMalzemeAdi(),
+            v.getTurId(), v.getTurAdi() != null ? v.getTurAdi() : "-",
+            v.getMensei() != null ? v.getMensei() : "-",
+            anlikStok, v.getOper(), v.getUpdatedAt(), hareketler
         );
     }
 
