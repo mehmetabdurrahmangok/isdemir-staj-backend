@@ -21,8 +21,8 @@ public class JwtService {
     private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_STRING));
 
     // Token Süreleri (İstediğiniz gibi ayarlandı):
-    private static final long ACCESS_TOKEN_EXPIRATION = 5 * 60 * 1000; // 5 Dakika (milisaniye)
-    private static final long REFRESH_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1 Saat (milisaniye)
+    private static final long ACCESS_TOKEN_EXPIRATION = 5 * 60 * 1000; // 5 Dakika (milisaniye)  
+    private static final long REFRESH_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1 Saat (milisaniye) 
 
     // 1. ACCESS TOKEN ÜRETME (İçine e-posta ve rol saklanır)
     public String generateAccessToken(String email, String role) {
