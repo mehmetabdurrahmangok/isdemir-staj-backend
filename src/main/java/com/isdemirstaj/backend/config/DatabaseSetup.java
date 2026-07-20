@@ -15,7 +15,6 @@ public class DatabaseSetup {
 
     @PostConstruct
     public void init() {
-        // Mevcut DTO yapına (MalzemeResponseDto) tam uyması için kolonları eşleştirdik
         String viewSql = """
             CREATE OR REPLACE VIEW VW_MALZEME_DETAY AS
             SELECT
