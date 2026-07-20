@@ -11,7 +11,7 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # 2. Aşama: Çalıştırma (Run) - Sadece derlenen .jar dosyasını alıp çalıştırır (Daha hafiftir)
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
