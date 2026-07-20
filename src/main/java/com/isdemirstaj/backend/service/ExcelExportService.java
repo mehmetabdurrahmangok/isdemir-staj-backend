@@ -1,5 +1,6 @@
 package com.isdemirstaj.backend.service;
 
+import com.isdemirstaj.backend.dto.malzeme.MalzemeResponseDto;
 import com.isdemirstaj.backend.dto.report.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -121,7 +122,6 @@ public class ExcelExportService {
                     ReportColumnDTO col = columns.get(i);
                     Cell cell = grandTotalRow.createCell(i + 1);
                 
-                    // Sizin kodunuzdaki rowTotal üzerinden veriyi alıyoruz
                     BigDecimal val = report.getRowTotal().getOrDefault(col.getHeaderName(), BigDecimal.ZERO);
                 
                     if (val.compareTo(BigDecimal.ZERO) == 0) {
@@ -142,4 +142,43 @@ public class ExcelExportService {
                 return out.toByteArray();
             }
         }
+
+            // Malzeme listesini basit bir Excel'e çeviren yeni metod
+    public byte[] exportMalzemeListesiToExcel(List<MalzemeResponseDto> malzemeler) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Tüm Malzemeler");
+            Row headerRow = sheet.createRow(0);
+
+            // Başlıklar
+            String[] headers = {"Kodu", "Adı", "Türü", "Menşei", "Güncel Stok"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+
+            // Veriler
+            int rowIdx = 1;
+            for (MalzemeResponseDto m : malzemeler) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(m.getMalzemeKodu());
+                row.createCell(1).setCellValue(m.getMalzemeAdi());
+                row.createCell(2).setCellValue(m.getMalzemeTurAdi());
+                row.createCell(3).setCellValue(m.getMensei());
+                if(m.getMevcutMiktar() != null) {
+                    row.createCell(4).setCellValue(m.getMevcutMiktar().doubleValue());
+                } else {
+                    row.createCell(4).setCellValue(0);
+                }
+            }
+
+            // Sütun genişliklerini ayarla
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            workbook.write(out);
+            return out.toByteArray();
+        }
+    }
 }

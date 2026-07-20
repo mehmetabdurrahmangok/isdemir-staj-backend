@@ -13,12 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MalzemeHareketRepository extends JpaRepository<MalzemeHareketEntity, Long> {
-    @Query(value = "SELECT COALESCE(SUM(CASE " +
-               "WHEN HAREKET_TURU IN ('GELEN', 'URETIM') THEN MIKTAR " +
-               "WHEN HAREKET_TURU IN ('TUKETIM', 'SATIS') THEN -MIKTAR " +
-               "ELSE 0 END), 0) " +
-               "FROM MALZEME_HAREKET_TBL WHERE MLZ_ID = :malzemeId",
-       nativeQuery = true)
+    @Query(value = "SELECT pkg_malzeme.fn_guncel_stok_hesapla(:malzemeId)", nativeQuery = true)
     public BigDecimal hesaplaMevcutStok(@Param("malzemeId") Long malzemeId);
 
     List<MalzemeHareketEntity> findByMalzemeId(Long malzemeId);
@@ -28,4 +23,8 @@ public interface MalzemeHareketRepository extends JpaRepository<MalzemeHareketEn
         LocalDateTime starDate,
         LocalDateTime endDate
     );
+    // bu fonksiyonun adından dolayı çalıştığı zaman SQL de şu sorgu çalışır
+    // SELECT * FROM malzeme_hareketleri 
+    // WHERE hareket_turu = ? 
+    // AND hareket_tarihi BETWEEN ? AND ?;
 }
