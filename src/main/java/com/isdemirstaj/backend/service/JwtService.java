@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -16,9 +17,12 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Token imzalamak için kullanılan 256-bit gizli anahtar (Base64 formatında şifrelenmiş)
-    private static final String SECRET_STRING = "dGhpc2lzYWJlYXV0aWZ1bHNlY3JldGtleWZvcmlzZGVtaXJzdGFqcHJvamVjdGxvZ2luc3lzdGVt";
-    private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_STRING));
+    // Token imzalamak için kullanılan gizli anahtar (application.properties'den gelir)
+    private final Key key;
+
+    public JwtService(@Value("${jwt.secret}") String secretString) {
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretString));
+    }
 
     // Token Süreleri (İstediğiniz gibi ayarlandı):
     private static final long ACCESS_TOKEN_EXPIRATION = 5 * 60 * 1000; // 5 Dakika (milisaniye)
