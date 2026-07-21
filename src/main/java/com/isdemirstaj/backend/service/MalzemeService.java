@@ -83,12 +83,22 @@ return viewListesi.stream().map(v -> {
         );
     }
 
-    // Malzeme silen metod
+    // (ESKİ!!)Malzeme silen metod
+    /* 
     public void deleteMalzeme(Long id) {
         if (!malzemeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Silinmek istenen malzeme bulunamadı. ID: " + id);
         }
         malzemeRepository.deleteById(id);
+    }
+    */
+    // yeni silme metodumuz veri tabanındaki veri silme prosedürünü çağırıyor
+    public void deleteMalzeme(Long id) {
+        if (!malzemeRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Silinmek istenen malzeme bulunamadı!! ID: " + id);
+        } 
+        // veri tabanında malzeme varsa siliyoruz
+        malzemeRepository.prosedurIleSil(id);
     }
 
     // Malzeme güncelleyen metod

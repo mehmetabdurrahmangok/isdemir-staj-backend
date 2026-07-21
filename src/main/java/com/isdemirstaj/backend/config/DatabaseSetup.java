@@ -59,5 +59,19 @@ public class DatabaseSetup {
         """;
         jdbcTemplate.execute(functionSql);
         System.out.println("✅ fn_guncel_stok_hesapla() fonksiyonu pkg_malzeme paketi içine başarıyla eklendi!");
+
+        String procedureSql = """
+                CREATE OR REPLACE PROCEDURE pkg_malzeme.pr_malzeme_sil(p_malzeme_id
+                BIGINT)
+                LANGUAGE plpgsql
+                AS $$
+                BEGIN
+                    -- gelen id değerine sahip malzemeyi siliyor
+                    DELETE FROM MALZEME_TANIM_TBL WHERE id = p_malzeme_id;
+                END;
+                $$;
+            """;
+            jdbcTemplate.execute(procedureSql);
+            System.out.println("✅ pr_malzeme_sil() prosedürü pkg_malzeme paketi içine başarıyla eklendi!");
     }
 }
