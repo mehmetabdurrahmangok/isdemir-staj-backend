@@ -25,6 +25,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         String path = request.getRequestURI();
 
+        // 2. YAPAY ZEKA (MCP) VE RAPOR EKRANI İÇİN BYPASS EKLENDİ!
+        if (path.startsWith("/api/ai") || path.startsWith("/api/malzemeler") || path.startsWith("/api/reports")) {
+            return true;
+        }
+
         // 2. Giriş, Kayıt ve Token Yenileme endpoint'leri güvenlik kontrolünden muaf tutulur
         if (path.contains("/api/users/login") || 
             path.contains("/api/users/register") || 

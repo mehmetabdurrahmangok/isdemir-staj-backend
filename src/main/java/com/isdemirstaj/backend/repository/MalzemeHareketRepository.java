@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MalzemeHareketRepository extends JpaRepository<MalzemeHareketEntity, Long> {
-    @Query(value = "SELECT pkg_malzeme.fn_guncel_stok_hesapla(:malzemeId)", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(CASE WHEN hareket_turu IN ('GELEN', 'URETIM') THEN miktar ELSE -miktar END), 0) FROM MALZEME_HAREKET_TBL WHERE mlz_id = :malzemeId", nativeQuery = true)
     public BigDecimal hesaplaMevcutStok(@Param("malzemeId") Long malzemeId);
 
     List<MalzemeHareketEntity> findByMalzemeId(Long malzemeId);

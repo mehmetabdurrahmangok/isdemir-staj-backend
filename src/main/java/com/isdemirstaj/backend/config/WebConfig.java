@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration // Bu sınıfın Spring Boot için bir konfigürasyon sınıfı olduğunu belirtir
+@Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
@@ -15,8 +15,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Yazdığımız JwtInterceptor güvenlik duvarını tüm /api/ ile başlayan adreslere uyguluyoruz
-       registry.addInterceptor(jwtInterceptor)
-               .addPathPatterns("/api/**");
+        // 1. Tüm sistemi (/api/**) JWT ile koru
+        // 2. Sadece yapay zeka servislerini (/api/ai/**) güvenlik duvarından muaf tut
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**");
+              //  .excludePathPatterns("/api/ai/**");
     }
 }

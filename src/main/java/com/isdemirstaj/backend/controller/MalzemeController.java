@@ -68,4 +68,18 @@ public class MalzemeController {
         MalzemeDetayResponseDto detay = malzemeService.getMalzemeDetayByKodu(malzemeKodu);
         return ResponseEntity.ok(detay);
     }
+    @GetMapping("/tur/{turAdi}")
+    public ResponseEntity<List<MalzemeResponseDto>> getMalzemelerByTurAdi(@PathVariable String turAdi) {
+        return ResponseEntity.ok(malzemeService.getMalzemelerByTurAdi(turAdi));
+    }
+
+    @GetMapping("/mensei/{mensei}")
+    public ResponseEntity<List<MalzemeResponseDto>> getMalzemelerByMensei(@PathVariable String mensei) {
+        return ResponseEntity.ok(malzemeService.getMalzemelerByMensei(mensei));
+    }
+
+    @GetMapping("/kritik-stok")
+    public ResponseEntity<List<MalzemeResponseDto>> getKritikStokMalzemeler() {
+        return ResponseEntity.ok(malzemeService.getKritikStokMalzemeler());
+    }
 }

@@ -46,6 +46,9 @@ List<MalzemeDetayViewEntity> viewListesi = malzemeDetayViewRepository.findAll();
 
 return viewListesi.stream().map(v -> {
     BigDecimal anlikStok = malzemeHareketRepository.hesaplaMevcutStok(v.getId());
+    if (anlikStok == null) {
+        anlikStok = BigDecimal.ZERO;
+    }
     return new MalzemeResponseDto(
         v.getId(), v.getMalzemeKodu(), v.getMalzemeAdi(), 
         v.getTurId(), v.getTurAdi(), v.getMensei(), 
@@ -159,6 +162,27 @@ return viewListesi.stream().map(v -> {
             v.getMensei() != null ? v.getMensei() : "-",
             anlikStok, v.getOper(), v.getUpdatedAt(), hareketler
         );
+    }
+
+    // =================================================================
+    // YAPAY ZEKA (AI) İÇİN EKLENEN YENİ FİLTRELEME SERVİSLERİ
+    // =================================================================
+    public List<MalzemeResponseDto> getMalzemelerByTurAdi(String turAdi) {
+        return getAllMalzemeler().stream()
+                .filter(dto -> dto.getMalzemeTurAdi() != null && dto.getMalzemeTurAdi().equalsIgnoreCase(turAdi))
+                .collect(Collectors.toList());
+    }
+
+    public List<MalzemeResponseDto> getMalzemelerByMensei(String mensei) {
+        return getAllMalzemeler().stream()
+                .filter(dto -> dto.getMensei() != null && dto.getMensei().equalsIgnoreCase(mensei))
+                .collect(Collectors.toList());
+    }
+
+    public List<MalzemeResponseDto> getKritikStokMalzemeler() {
+        return getAllMalzemeler().stream()
+                .filter(dto -> dto.getMevcutMiktar() != null && dto.getMevcutMiktar().compareTo(BigDecimal.ZERO) <= 0)
+                .collect(Collectors.toList());
     }
 
 }

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReportService {
     private final MalzemeHareketRepository malzemeHareketRepository;
+    private final com.isdemirstaj.backend.repository.MalzemeRepository malzemeRepository;
 
     public ReportResponseDTO generatePivotReport(HareketTuruEnum hareketTuru,
         LocalDateTime start, LocalDateTime end) {
@@ -28,10 +29,10 @@ public class ReportService {
             List<MalzemeHareketEntity> hareketler = malzemeHareketRepository
                 .findByHareketTuruAndHareketTarihiBetween(hareketTuru, start, end);
 
-            // çekilen hareket verisine göre sadece hareket gören verileri malzeme türleri ile birlikte çekiyoruz
+            // Tüm malzemeleri çekiyoruz ki hareket olmasa bile Excel tablosunda sütunlar eksiksiz ve düzgün çıksın
+            List<MalzemeEntity> tumMalzemeler = malzemeRepository.findAll();
             Map<MalzemeTurEntity, Set<MalzemeEntity>> turBazliMalzemeler =
-            hareketler.stream()
-                .map(MalzemeHareketEntity::getMalzeme)
+            tumMalzemeler.stream()
                 .collect(Collectors.groupingBy(MalzemeEntity::getMalzemeTur,
                     Collectors.toSet()));
 
